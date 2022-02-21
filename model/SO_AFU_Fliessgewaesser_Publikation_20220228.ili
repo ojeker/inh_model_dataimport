@@ -1,0 +1,50 @@
+INTERLIS 2.3;
+
+/** !!-----------------------------------------------------------------------------
+ * !! Publikationsmodell für die Fliessgewässer(eigenschaften).
+ * !!------------------------------------------------------------------------------
+ * !! Version    | wer | Aenderung
+ * !!------------------------------------------------------------------------------
+ * !! 2022-02-21 | OJ  | Erstellt aus SO_AFU_Fliessgewaesser_20220218.ili
+ * !!==============================================================================
+ */
+!!@ technicalContact = mailto:agi@bd.so.ch
+MODEL SO_AFU_Fliessgewaesser_Publikation_20220228 (de) 
+AT "http://geo.so.ch/models/AFU" 
+VERSION "2022-02-28" =
+
+    IMPORTS Units;    
+    IMPORTS UNQUALIFIED GeometryCHLV95_V1, LocalisationCH_V1;    
+ 
+        DOMAIN
+            AbschnittsTyp = (offen, eingedolt, parallel, Seeufer, virtuell, Karst, versickert, Stausee, Insel, unterirdisch, Kanal, Entlastung, 
+                            Graben, Drainage, andere, Kanal_eingedolt, Entlastung_eingedolt, Graben_eingedolt, Drainage_eingedolt, andere_eingedolt, parallel_eingedolt);
+            Eigentumsart = (Staat, Privat, unbekannt);
+            Digitalisierungsdetail = (unbekannt, SE_Ausf_Plan, Uebers_Plan, SE_GEP_GKP, Vermessung_GBPlan, Melioration, Projektplan, Leitungskataster, Orthophoto) ;            
+            Datenherr = (CH, SO);
+
+            CLASS Gewaessereigenschaften_Basis (ABSTRACT) =
+                Geometrie: MANDATORY GeometryCHLV95_V1.Line;
+                DatenherrGwB: Datenherr;                    
+                Typ: AbschnittsTyp;                     
+                Groesse: (klein, mittel, gross);
+                GDENR: 1 .. 9999;
+                GDENR2: 1 .. 9999;
+                Qualitaet: Digitalisierungsdetail;
+                Eigentum: Eigentumsart;                     
+                VorfluterGEWISSNr:   0 .. 9999;              
+                VorfluterNebenGNr:   0 .. 999999;              
+                DatenherrKm: Datenherr;                     
+                Strahler: -99 .. 99; 
+                Erhebungsdatum: INTERLIS.XMLDate;          
+                Importdatum: INTERLIS.XMLDate;              
+            END Gewaessereigenschaften_Basis; 
+
+        TOPIC Fliessgewaesser = 
+
+            CLASS Gewaessereigenschaften EXTENDS Gewaessereigenschaften_Basis =
+            END Gewaessereigenschaften; 
+
+        END Fliessgewaesser;
+
+END SO_AFU_Fliessgewaesser_Publikation_20220228.

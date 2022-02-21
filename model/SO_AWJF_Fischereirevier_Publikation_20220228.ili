@@ -1,0 +1,42 @@
+INTERLIS 2.3;
+
+/** !!-----------------------------------------------------------------------------
+ * !! Publikationsmodell für Fischereireviere entlang der Fliessgewässer.
+ * !!------------------------------------------------------------------------------
+ * !! Version    | wer | Aenderung
+ * !!------------------------------------------------------------------------------
+ * !! 2022-02-21 | OJ  | Erstellt aus SO_AFU_Fliessgewaesser_20220218.ili
+ * !!==============================================================================
+ */
+!!@ technicalContact = mailto:agi@bd.so.ch
+MODEL SO_AWJF_Fischereirevier_Publikation_20220228 (de) 
+AT "http://geo.so.ch/models/AWJF" 
+VERSION "2022-02-28" =
+
+    IMPORTS Units;    
+    IMPORTS UNQUALIFIED GeometryCHLV95_V1, LocalisationCH_V1;    
+ 
+        DOMAIN
+
+            Eigentumsart = (Staat, Privat, unbekannt);
+
+            CLASS Fischereirevier_Basis (ABSTRACT) = 
+                Revier_Id: MANDATORY TEXT*10;
+                Name: MANDATORY TEXT*100;
+                Beschreibung: MANDATORY MTEXT*400;
+                Eigentum: MANDATORY Eigentumsart;
+                Bonitierung: INTERLIS.BOOLEAN;
+                Fischbestand: (G, E);
+                Fischerei: (Pacht, Privat, Schon, Patent);
+                Erhebungsdatum: INTERLIS.XMLDate;
+            END Fischereirevier_Basis;
+
+        TOPIC Fischerei =
+
+            CLASS Fischereirevier EXTENDS Fischereirevier_Basis =
+                Geometrie: MANDATORY GeometryCHLV95_V1.Line; !! Todo Multiline
+            END Fischereirevier;
+
+        END Fischerei;
+
+END SO_AWJF_Fischereirevier_Publikation_20220228.

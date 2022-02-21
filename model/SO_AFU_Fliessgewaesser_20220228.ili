@@ -1,0 +1,106 @@
+INTERLIS 2.3;
+
+/** !!-----------------------------------------------------------------------------
+ * !! Erfassungsmodell für für die Fliessgewässer und abschnittbezogene
+ * !! Fliessgewässerinformationen des Kt. Solothurn.
+ * !! Ausgelegt für die Arbeit mittels Hilfsklassen zur Definition der linearen 
+ * !! Referenzen in QGIS.
+ * !!------------------------------------------------------------------------------
+ * !! Version    | wer | Aenderung
+ * !!------------------------------------------------------------------------------
+ * !! 2021-12-02 | OG  | 1. Entwurf GeoWerkstatt GmbH (OG = Oliver Grimm)
+ * !! 2021-12-13 | OG  | Finalisierung nach Besprechung Entwurf
+ * !! 2022-01-20 | OG  | Verschiedene Anpassungen nach Projekt-Zwischenbesprechung
+ * !! 2022-01-20 | OJ  | Umbenennungen zwecks Richtlinienkonformität Kt. Solothurn
+ * !! 2022-02-18 | OG  | STRUCTURE BreiteUferBereich entfernt, Bereinigungen
+ * !! 2022-02-21 | OJ  | Import der Basisklassen aus den Pub-Modellen
+ * !!==============================================================================
+ */
+!!@ technicalContact = mailto:agi@bd.so.ch
+MODEL SO_AFU_Fliessgewaesser_20220228 (de) 
+AT "http://geo.so.ch/models/AFU" 
+VERSION "2022-02-28" =
+
+    IMPORTS Units;    
+    IMPORTS UNQUALIFIED GeometryCHLV95_V1, LocalisationCH_V1;    
+    IMPORTS SO_AFU_Fliessgewaesser_Publikation_20220228, SO_AFU_Fliessgewaesser_Oekomorph_Publikation_20220228;
+    IMPORTS SO_AWJF_Fischereirevier_Publikation_20220228;
+ 
+        TOPIC Fliessgewaesser =
+
+            CLASS GewaesserBasisgeometrie =
+                Geometrie: MANDATORY DirectedLine;
+                GNRSO: MANDATORY 1 .. 9999999999;
+                Name: MANDATORY TEXT*1000;
+            END GewaesserBasisgeometrie;
+
+            CLASS GewaesserEigenschaften EXTENDS SO_AFU_Fliessgewaesser_Publikation_20220228.Gewaessereigenschaften_Basis =          
+            END GewaesserEigenschaften; 
+
+            ASSOCIATION GewEigensch_Basisgeometrie = 
+                rGewaesser -- {1} GewaesserBasisgeometrie;
+                rEigenschaft -- {1..*} GewaesserEigenschaften;   
+            END GewEigensch_Basisgeometrie;
+
+        END Fliessgewaesser;
+
+        TOPIC Oekomorph = 
+            DEPENDS ON Fliessgewaesser;
+
+            CLASS Oekomorph EXTENDS SO_AFU_Fliessgewaesser_Oekomorph_Publikation_20220228.Oekomorph_Basis =
+                Geometrie: MANDATORY GeometryCHLV95_V1.Line;                 
+            END Oekomorph;
+
+            CLASS Absturz EXTENDS SO_AFU_Fliessgewaesser_Oekomorph_Publikation_20220228.Absturz_Basis =
+                Geometrie: MANDATORY GeometryCHLV95_V1.Coord2; 
+            END Absturz;
+
+            CLASS Bauwerk EXTENDS SO_AFU_Fliessgewaesser_Oekomorph_Publikation_20220228.Bauwerk_Basis = 
+                Geometrie: MANDATORY GeometryCHLV95_V1.Coord2;               
+            END Bauwerk;
+
+            ASSOCIATION Oekomorph_Basisgeometrie = 
+                rGewaesser (EXTERNAL) -- {1} SO_AFU_Fliessgewaesser_20220228.Fliessgewaesser.GewaesserBasisgeometrie;
+                rOekomorph -- {0..*} Oekomorph;   
+            END Oekomorph_Basisgeometrie;
+
+            ASSOCIATION Absturz_Basisgeometrie = 
+                rGewaesser (EXTERNAL) -- {1} SO_AFU_Fliessgewaesser_20220228.Fliessgewaesser.GewaesserBasisgeometrie;
+                rAbsturz -- {0..*} Absturz;   
+            END Absturz_Basisgeometrie;
+
+            ASSOCIATION Bauwerk_Basisgeometrie = 
+                rGewaesser (EXTERNAL) -- {1} SO_AFU_Fliessgewaesser_20220228.Fliessgewaesser.GewaesserBasisgeometrie;
+                rBauwerk -- {0..*} Bauwerk;   
+            END Bauwerk_Basisgeometrie;
+
+        END Oekomorph;
+
+        TOPIC Fischerei =
+            DEPENDS ON Fliessgewaesser;
+                   
+            CLASS FischRevier EXTENDS SO_AWJF_Fischereirevier_Publikation_20220228.Fischereirevier_Basis =
+                Importdatum: INTERLIS.XMLDate;
+                RevierId: MANDATORY TEXT*10;
+            END FischRevier;
+
+            CLASS FischRevierAbschnitt =
+                Geometrie: MANDATORY GeometryCHLV95_V1.Line;
+                Nutzung: MANDATORY (Aufzucht, Fischerei, Reservat_AWJF, Schongebiet, Aufzucht_Fischerei);
+                Erhebungsdatum: INTERLIS.XMLDate;
+                Importdatum: INTERLIS.XMLDate;
+            END FischRevierAbschnitt;
+
+            ASSOCIATION FischRevierAbschnitt_Basisgeometrie = 
+                rGewaesser (EXTERNAL) -- {1} SO_AFU_Fliessgewaesser_20220228.Fliessgewaesser.GewaesserBasisgeometrie;
+                rFischRevierAbschnitt -- {0..*} FischRevierAbschnitt;   
+            END FischRevierAbschnitt_Basisgeometrie;
+
+            ASSOCIATION FischRevier_FischRevierAbschnitt = 
+                rFischRevier -- {1} FischRevier;
+                rFischRevierAbschnitt -- {1..*} FischRevierAbschnitt;   
+            END FischRevier_FischRevierAbschnitt;
+
+        END Fischerei;
+
+END SO_AFU_Fliessgewaesser_20220228.
