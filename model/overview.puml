@@ -1,0 +1,76 @@
+@startuml
+
+title Gewisso: Vererbungsbeziehungen
+
+package Publikation {
+	package "..._Oekomorph_Publikation.ili" {
+		class "Oekomorph_Basis" as morph_b
+		class "Absturz_Basis" as sturz_b
+		class "Bauwerk_Basis" as bau_b
+		
+		package "T Oekomorph" {
+			class "Oekomorph" as morph
+			class "Absturz" as sturz
+			class "Bauwerk" as bau
+		}
+		morph_b <|-- morph 
+		sturz_b <|-- sturz
+		bau_b <|-- bau
+	}
+	
+	package "...Fliessgewaesser_Publikation.ili" {
+		class "Gewaessereigenschaften_Basis" as gew_b
+		
+		package "T Fliessgewaesser" {
+			class "Gewaessereigenschaften" as gew
+		}
+		
+		gew_b <|-- gew
+	}
+	
+	package "...Fischereirevier_Publikation.ili" {
+		class "Fischereirevier_Basis" as fisch_b
+		
+		package "TOPIC Fischerei" {
+			class "Fischereirevier" as fisch
+		}
+		
+		fisch_b <|-- fisch
+	}
+}
+
+package Edit {
+	package "...Fliessgewaesser.ili" {
+		package "T Fliessgewaesser." {
+			class "Gewaessereigenschaften" as gew_e
+		}
+		
+		package "T Oekomorph." {
+			class "Oekomorph" as morph_e
+			class "Absturz" as sturz_e
+			class "Bauwerk" as bau_e
+		}
+		
+		package "T Fischerei." {
+			class "FischRevier" as fisch_e
+		}
+	}
+}
+
+gew_b <|-up- gew_e
+
+morph_b <|-up- morph_e 
+sturz_b <|-up- sturz_e
+bau_b <|-up- bau_e
+
+fisch_b <|-up- fisch_e
+
+legend
+	Nicht an Vererbungen teilnehmende
+	Klassen sind ausgeblendet.
+	
+	M: INTERLIS Modell
+	T: INTERLIS Topic
+end legend
+
+@enduml
