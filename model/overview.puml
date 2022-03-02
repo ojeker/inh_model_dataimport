@@ -4,9 +4,9 @@ title Gewisso: Vererbungsbeziehungen
 
 package Publikation {
 	package "..._Oekomorph_Publikation.ili" {
-		class "Oekomorph_Basis" as morph_b
-		class "Absturz_Basis" as sturz_b
-		class "Bauwerk_Basis" as bau_b
+		abstract "Oekomorph_Basis" as morph_b
+		abstract "Absturz_Basis" as sturz_b
+		abstract "Bauwerk_Basis" as bau_b
 		
 		package "T Oekomorph" {
 			class "Oekomorph" as morph
@@ -19,7 +19,7 @@ package Publikation {
 	}
 	
 	package "...Fliessgewaesser_Publikation.ili" {
-		class "Gewaessereigenschaften_Basis" as gew_b
+		abstract "Gewaessereigenschaften_Basis" as gew_b
 		
 		package "T Fliessgewaesser" {
 			class "Gewaessereigenschaften" as gew
@@ -29,7 +29,7 @@ package Publikation {
 	}
 	
 	package "...Fischereirevier_Publikation.ili" {
-		class "Fischereirevier_Basis" as fisch_b
+		abstract "Fischereirevier_Basis" as fisch_b
 		
 		package "TOPIC Fischerei" {
 			class "Fischereirevier" as fisch
